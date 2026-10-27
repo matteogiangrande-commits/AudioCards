@@ -1,0 +1,31 @@
+name: Build Windows candidate (not a release)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: windows-2022
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.10'
+          architecture: 'x64'
+          cache: 'pip'
+          cache-dependency-path: 'requirements-build.lock'
+      - name: Install developer build environment
+        run: python -m pip install --only-binary=:all: -r requirements-build.lock
+      - name: Build and exercise the frozen candidate
+        run: python tools/build_windows.py
+      - name: Upload candidate and test evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: AudioCards-Windows-CANDIDATE
+          path: |
+            dist/AudioCards_Windows_x64_CANDIDATE_v2.0.zip
+            dist/AudioCards_Windows_x64_CANDIDATE_v2.0.zip.sha256
+            reports/windows-*.json
+            reports/windows-*.xml
+          if-no-files-found: error
