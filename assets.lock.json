@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "status": "candidates_not_acoustically_tested",
+  "voices": {
+    "it": {
+      "voice_id": "it_IT-paola-medium",
+      "revision": "3e41fe6382ea00c4e68ba793c4a2f462fa14d0e9",
+      "directory": "it/it_IT/paola/medium",
+      "model_sha256": "6fc918b5a0ea6137382833dddfa567bffbe6a5060c02043c87192ee59c04210c",
+      "dataset_license_note": "Dataset card: CC0-1.0; model card notes fine-tuning from lessac. Retain model card and review redistribution provenance before public release."
+    },
+    "en": {
+      "voice_id": "en_US-ljspeech-medium",
+      "revision": "bae641dcb5a608cff81ccaf7ff018baaca1a33e1",
+      "directory": "en/en_US/ljspeech/medium",
+      "model_sha256": "6f52a751e2349abe7a76735eb09dc1875298c77ea2342ffd2fef79ff81b87f22",
+      "dataset_license_note": "Model card: public domain LJ Speech dataset; trained from scratch. Retain model card and repository license."
+    }
+  },
+  "ffmpeg": {
+    "version": "9.0.2-essentials_build",
+    "url": "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-9.0.2-essentials_build.zip",
+    "sha256": "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba",
+    "license_note": "Gyan essentials static build: GPLv3, not LGPL. Full corresponding-source obligations must be resolved before redistribution."
+  }
+}

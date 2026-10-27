@@ -1,0 +1,11 @@
+-r requirements.lock
+setuptools==80.9.0
+pyinstaller==6.14.2
+pyinstaller-hooks-contrib==2025.5
+altgraph==0.17.4
+pefile==2023.2.7 ; sys_platform == 'win32'
+pywin32-ctypes==0.2.3 ; sys_platform == 'win32'
+pytest==8.3.5
+iniconfig==2.1.0
+pluggy==1.6.0
+colorama==0.4.6 ; sys_platform == 'win32'

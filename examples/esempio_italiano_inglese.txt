@@ -1,0 +1,8 @@
+Che cosa contiene una flashcard? | Una domanda e una risposta.
+Quando ascolti la prima risposta? | Subito dopo la prima domanda.
+What comes after a review question? | A pause, followed by the answer.
+A cosa serve la pausa? | A provare a formulare mentalmente la risposta.
+How are long courses divided? | Into consecutive audio files.
+Quale data compare in questo esempio? | 2026-10-27
+What does the app measure? | Planned retrieval opportunities, not learning success.
+Che cosa succede al termine della pausa? | Viene riprodotta la risposta di riferimento.

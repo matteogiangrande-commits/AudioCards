@@ -1,0 +1,35 @@
+Controllo componenti locali
+Voce: scheda 1/100, domanda
+Voce: scheda 11/100, domanda
+Voce: scheda 21/100, domanda
+Voce: scheda 31/100, domanda
+Voce: scheda 41/100, domanda
+Voce: scheda 51/100, domanda
+Voce: scheda 61/100, domanda
+Voce: scheda 71/100, domanda
+Voce: scheda 81/100, domanda
+Voce: scheda 91/100, domanda
+Programmazione dei richiami
+Montaggio MP3 1/3
+Montaggio MP3 2/3
+Montaggio MP3 3/3
+{
+  "status": "completed",
+  "speech_provider": "ESPEAK_DEVELOPMENT_DEMO_NOT_PIPER",
+  "piper_tested": false,
+  "windows_tested": false,
+  "card_count": 100,
+  "event_count": 300,
+  "mp3_count": 3,
+  "durations_s": [
+    1195.2,
+    1199.4,
+    831.144
+  ],
+  "total_audio_s": 3225.744,
+  "output_directory": "/mnt/data/AudioCards_100_Test/output/Demo 100 schede - voce tecnica eSpeak/20261027T180031Z-fff07314",
+  "tts_calls": 25,
+  "warnings": [
+    "24 richiami anticipati per non inserire lunghi silenzi; gli scostamenti sono registrati negli eventi."
+  ]
+}

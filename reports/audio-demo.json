@@ -1,0 +1,17 @@
+{
+  "status": "completed",
+  "speech_provider": "ESPEAK_DEVELOPMENT_DEMO_NOT_PIPER",
+  "piper_tested": false,
+  "windows_tested": false,
+  "card_count": 8,
+  "event_count": 24,
+  "mp3_count": 1,
+  "durations_s": [
+    213.048
+  ],
+  "total_audio_s": 213.048,
+  "tts_calls": 18,
+  "warnings": [
+    "16 richiami anticipati per non inserire lunghi silenzi; gli scostamenti sono registrati negli eventi."
+  ]
+}

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "audiocards-local"
+version = "2.0.0.dev1"
+description = "Offline audio flashcard authoring for Windows portable"
+requires-python = ">=3.11"
+license = "GPL-3.0-or-later"
+
+[tool.setuptools]
+packages = ["audiocards"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
