@@ -16,7 +16,7 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'requirements-build.lock'
       - name: Install developer build environment
-        run: python -m pip install --only-binary=:all: -r requirements-build.lock
+        run: 'python -m pip install --only-binary=:all: -r requirements-build.lock'
       - name: Build and exercise the frozen candidate
         run: python tools/build_windows.py
       - name: Upload candidate and test evidence
