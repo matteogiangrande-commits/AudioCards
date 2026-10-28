@@ -143,8 +143,18 @@ def main():
     relocated_report = ROOT/'build'/'relocated-smoke'
     check = subprocess.run([str(relocated/'AudioCards.exe'),'--self-test-dir',str(relocated_report)],
                            env=environment, cwd=relocated.parent, timeout=600, shell=False)
-    if check.returncode:
-        raise SystemExit('Relocated Windows smoke test failed.')
+    relocated_result = relocated_report/'self_test.json'
+    diagnostic = {'returncode':check.returncode, 'executable':str(relocated/'AudioCards.exe'),
+                  'report_path':str(relocated_result)}
+    if relocated_result.is_file():
+        try:
+            diagnostic['self_test'] = json.loads(relocated_result.read_text(encoding='utf-8'))
+        except Exception as exc:
+            diagnostic['report_read_error'] = repr(exc)
+    atomic_json(ROOT/'reports'/'windows-relocated-smoke.json', diagnostic)
+    if check.returncode or diagnostic.get('self_test', {}).get('status') != 'passed':
+        print('Relocated Windows smoke test diagnostic:',json.dumps(diagnostic,ensure_ascii=False),flush=True)
+        raise SystemExit('Relocated Windows smoke test failed; see above diagnostic and uploaded JSON report.')
     archive_path = ROOT/'dist'/'AudioCards_Windows_x64_CANDIDATE_v2.0.zip'
     with zipfile.ZipFile(archive_path,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
         for path in bundle.rglob('*'):
