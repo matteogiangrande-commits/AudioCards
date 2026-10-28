@@ -1,7 +1,10 @@
 from __future__ import annotations
+import atexit
 import importlib.metadata
 import json
 import os
+import shutil
+import tempfile
 from pathlib import Path
 from typing import Protocol
 import wave
@@ -22,6 +25,7 @@ class PiperProvider:
         self.models_dir = models_dir
         self._voices = {}
         self._fingerprints = {}
+        self._espeak_data_dir = None
         # No Piper imports or networking until the worker actually needs speech.
 
     def fingerprint(self, language: str) -> dict:
@@ -65,11 +69,12 @@ class PiperProvider:
             raise RuntimeError(
                 'Dati fonetici eSpeak NG mancanti nel pacchetto: ' + str(espeak_dir)
             )
-        os.environ['ESPEAK_DATA_PATH'] = str(espeak_dir)
+        if self._espeak_data_dir is None:
+            self._espeak_data_dir = _native_safe_espeak_dir(espeak_dir)
         if language not in self._voices:
             self._voices[language] = PiperVoice.load(
                 self.models_dir / f'{language}_voice.onnx', use_cuda=False,
-                espeak_data_dir=espeak_dir)
+                espeak_data_dir=self._espeak_data_dir)
         voice = self._voices[language]
         # Fixed zero noise avoids a fresh stochastic duration at every regeneration.
         settings = SynthesisConfig(length_scale=1.0/speed, noise_scale=0.0,
@@ -93,3 +98,50 @@ def speech_chunks(text: str, limit: int = 600) -> list[str]:
         parts.append(remaining[:split].strip()); remaining = remaining[split:].strip()
     if remaining: parts.append(remaining)
     return parts
+
+
+def _is_ascii_path(path: Path) -> bool:
+    try:
+        os.fspath(path).encode('ascii')
+        return True
+    except UnicodeEncodeError:
+        return False
+
+
+def _native_safe_espeak_dir(source: Path) -> Path:
+    """Stage eSpeak data to an ASCII path when the native Windows library cannot
+    open Unicode paths. No network, admin rights, or modification of the bundle.
+
+    The location is a private per-process temporary directory. A normal ASCII
+    installation loads data directly from the bundle without copying.
+    """
+    source = source.resolve()
+    if not (source / 'phontab').is_file():
+        raise RuntimeError('Tabelle fonetiche eSpeak assenti: ' + str(source))
+    if os.name != 'nt' or _is_ascii_path(source):
+        return source
+
+    roots = [Path(tempfile.gettempdir())]
+    system_root = Path(os.environ.get('SystemRoot', r'C:\Windows'))
+    roots.append(system_root / 'Temp')
+    for root in roots:
+        if not _is_ascii_path(root):
+            continue
+        try:
+            staging_parent = Path(tempfile.mkdtemp(prefix='AudioCards-espeak-', dir=root))
+        except OSError:
+            continue
+        try:
+            staged = staging_parent / 'espeak-ng-data'
+            shutil.copytree(source, staged)
+            if not (staged / 'phontab').is_file():
+                raise RuntimeError('Copia temporanea eSpeak incompleta.')
+            atexit.register(shutil.rmtree, staging_parent, ignore_errors=True)
+            return staged
+        except Exception:
+            shutil.rmtree(staging_parent, ignore_errors=True)
+            raise
+    raise RuntimeError(
+        'Il componente fonetico richiede una cartella temporanea scrivibile '
+        'con percorso ASCII; nessuna delle directory di sistema e adatta.'
+    )
