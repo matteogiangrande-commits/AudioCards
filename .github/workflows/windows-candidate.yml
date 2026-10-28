@@ -8,8 +8,8 @@ jobs:
     runs-on: windows-2022
     timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12.10'
           architecture: 'x64'
@@ -29,3 +29,13 @@ jobs:
             reports/windows-*.json
             reports/windows-*.xml
           if-no-files-found: error
+      - name: Upload diagnostic reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AudioCards-Windows-FAILURE-DIAGNOSTICS
+          path: |
+            reports/
+            build/relocated-smoke/self_test.json
+            build/frozen-smoke/self_test.json
+          if-no-files-found: warn
