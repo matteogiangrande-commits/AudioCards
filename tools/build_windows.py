@@ -160,7 +160,7 @@ def main():
             diagnostic['report_read_error'] = repr(exc)
     atomic_json(ROOT/'reports'/'windows-relocated-smoke.json', diagnostic)
     if check.returncode or diagnostic.get('self_test', {}).get('status') != 'passed':
-        print('Relocated Windows smoke test diagnostic:',json.dumps(diagnostic,ensure_ascii=False),flush=True)
+        print('Relocated Windows smoke test diagnostic:',json.dumps(diagnostic,ensure_ascii=True),flush=True)
         raise SystemExit('Relocated Windows smoke test failed; see above diagnostic and uploaded JSON report.')
     archive_path = ROOT/'dist'/'AudioCards_Windows_x64_CANDIDATE_v2.0.zip'
     with zipfile.ZipFile(archive_path,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
