@@ -141,11 +141,18 @@ def main():
     relocated = ROOT/'build'/'Spostata \u00e8 con spazi'/'AudioCards'
     shutil.copytree(bundle, relocated, dirs_exist_ok=True)
     relocated_report = ROOT/'build'/'relocated-smoke'
+    environment['AUDIOCARDS_BOOTSTRAP_LOG'] = str(ROOT/'reports'/'windows-relocated-bootstrap.txt')
     check = subprocess.run([str(relocated/'AudioCards.exe'),'--self-test-dir',str(relocated_report)],
-                           env=environment, cwd=relocated.parent, timeout=600, shell=False)
+                           env=environment, cwd=relocated.parent, timeout=600, shell=False,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     relocated_result = relocated_report/'self_test.json'
     diagnostic = {'returncode':check.returncode, 'executable':str(relocated/'AudioCards.exe'),
-                  'report_path':str(relocated_result)}
+                  'report_path':str(relocated_result),
+                  'stdout_tail':check.stdout[-12000:].decode('utf-8', errors='replace'),
+                  'stderr_tail':check.stderr[-12000:].decode('utf-8', errors='replace')}
+    bootstrap_log = Path(environment['AUDIOCARDS_BOOTSTRAP_LOG'])
+    if bootstrap_log.is_file():
+        diagnostic['bootstrap_traceback'] = bootstrap_log.read_text(encoding='utf-8', errors='replace')[-12000:]
     if relocated_result.is_file():
         try:
             diagnostic['self_test'] = json.loads(relocated_result.read_text(encoding='utf-8'))
