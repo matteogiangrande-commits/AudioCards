@@ -1,6 +1,7 @@
 from __future__ import annotations
 import importlib.metadata
 import json
+import os
 from pathlib import Path
 from typing import Protocol
 import wave
@@ -55,9 +56,20 @@ class PiperProvider:
         import onnxruntime
         onnxruntime.disable_telemetry_events()
         from piper import PiperVoice, SynthesisConfig
+        from piper import phonemize_espeak
+        # The Windows Piper wheel can contain an eSpeak fallback path pointing
+        # to the machine where its native library was compiled. Always select
+        # the data included in the *current* frozen bundle (not the build path).
+        espeak_dir = Path(phonemize_espeak.__file__).resolve().parent / 'espeak-ng-data'
+        if not (espeak_dir / 'phontab').is_file():
+            raise RuntimeError(
+                'Dati fonetici eSpeak NG mancanti nel pacchetto: ' + str(espeak_dir)
+            )
+        os.environ['ESPEAK_DATA_PATH'] = str(espeak_dir)
         if language not in self._voices:
             self._voices[language] = PiperVoice.load(
-                self.models_dir / f'{language}_voice.onnx', use_cuda=False)
+                self.models_dir / f'{language}_voice.onnx', use_cuda=False,
+                espeak_data_dir=espeak_dir)
         voice = self._voices[language]
         # Fixed zero noise avoids a fresh stochastic duration at every regeneration.
         settings = SynthesisConfig(length_scale=1.0/speed, noise_scale=0.0,
